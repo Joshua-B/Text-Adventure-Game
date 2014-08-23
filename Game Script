@@ -1,0 +1,116 @@
+<script>
+var health = 100;
+var cHealth = 75;
+var lvl = 1;
+var gold = 0;
+var tankMultiplier = 1;
+var lightMultiplier = 1;
+var playing = true;
+var comName = "Corrupted Floppy Disk";
+
+//Enter you name.
+var playerName = prompt("Enter you player's name.");
+var playerType = prompt("Choose your class. 'tank' or 'light'?").toLowerCase();
+
+if(playerType === "tank"){
+tankMultiplier = 2;
+} else if(playerType === "light"){
+lightMultiplier = 2;
+}
+
+var shop = function(){
+var shoppingQ= prompt("Would you like to increase the power of your 'smash' or your 'swipe'?").toLowerCase();
+if(shoppingQ === "smash"){
+var smashUpgrade = prompt("Would you like to spend 5 gold for 5% more power?").toLowerCase();
+if (smashUpgrade === "yes" && gold >= 5){
+gold -= 5;
+tankMultiplier = Math.floor(tankMultiplier*1.1);
+document.getElementById("printGold").innerHTML="You have "+ gold + " gold.";
+alert("Purchase succesful.");
+
+} else if(smashUpgrade === "yes" && gold < 5){
+alert("You can't afford that!");
+}
+
+} else if(shoppingQ === "swipe"){
+var swipeUpgrade = prompt("Would you like to spend 5 gold for 5% more power?").toLowerCase();
+if(swipeUpgrade === "yes" && gold >= 5)
+gold -= 5;
+lightMultiplier = Math.floor(lightMultiplier*1.05)+1;
+document.getElementById("printGold").innerHTML="You have "+ gold + " gold.";
+alert("Purchase succesful.");
+
+} else if(swipeUpgrade === "yes" && gold < 5){
+alert("You can't afford that!");
+} else {};
+
+}
+var gameLoop = function(){
+		//Subtract the damage from the computer's health.
+		cHealth -= damage;
+
+		//Write the damage on the web-page.
+		document.getElementById("printDamage").innerHTML="You did " + damage + " damage.";
+
+		//Check the computer's health.
+		if(cHealth <= 0) {
+		document.getElementById("printCHealth").innerHTML= comName + "'s health is 0";
+		alert("You beat level " + lvl + "!");
+		
+		//Next level sequence.
+		gold += lvl*2;
+		document.getElementById("printGold").innerHTML="You have "+ gold + " gold.";
+		lvl++;
+		console.log(gold);
+		shop();
+		alert("You are now on level " + lvl);
+		cHealth = 100*lvl/2;
+		health = 100*lvl/2;
+		} else {
+
+		//Start the computer's turn.
+
+		//Random damage attack.
+		var cAttack = Math.floor((Math.random()*lvl*10)+1);
+		var cDamage = cAttack;
+		health -= cDamage;
+
+		//Print the player's damage taken.
+		document.getElementById("printCDamage").innerHTML="You took " + cDamage + " damage!";
+		}
+		//Check the player's health.
+		if(health <= 0){
+		alert("You lose! You made it to level " + lvl);
+		playing = false;
+		}
+}
+
+//The game's loop.
+while(playing){
+
+	//Alert your health.
+	document.getElementById("printHealth").innerHTML = playerName + "'s health is " + health;
+	document.getElementById("printCHealth").innerHTML = comName + "'s health is " + cHealth;
+
+	//Enter your attack.
+	var pAttack = prompt("Attack! Use a 'swipe', 'smash' or 'pass''.").toLowerCase();
+	
+	switch(pAttack){
+		case "swipe":
+		//Generate the swipes damage.
+		var damage = Math.floor(Math.random()*25+1)*lightMultiplier;
+		gameLoop();
+	break;
+		case "smash":
+		var damage = 20*tankMultiplier;
+		gameLoop();
+	break;
+		case "pass":
+		damage = 0;
+		gameLoop();
+	break;	
+		default:
+		alert(pAttack + " is not a valid attack!")
+		}
+}
+</script>
